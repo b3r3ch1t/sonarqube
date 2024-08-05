@@ -1,0 +1,33 @@
+version: "3.7"
+
+services:
+  sonarqube:
+    container_name: sonarqube-container # Custom container name
+    image: sonarqube:community
+    depends_on:
+      - db
+    environment:
+      - SONAR_JDBC_URL=jdbc:mysql://db:3306/sonarqube?useSSL=false
+      - SONAR_JDBC_USERNAME=sonar
+      - SONAR_JDBC_PASSWORD=sonar
+    ports:
+      - "9000:9000"
+    restart: unless-stopped # Restart policy
+    networks:
+      - sonarnet
+
+  db:
+    container_name: sonarqube-db-container # Custom container name
+    image: mysql:5.7
+    environment:
+      - MYSQL_ROOT_PASSWORD=rootpassword
+      - MYSQL_DATABASE=sonarqube
+      - MYSQL_USER=sonar
+      - MYSQL_PASSWORD=sonar
+    restart: unless-stopped # Restart policy
+    networks:
+      - sonarnet
+
+networks:
+  sonarnet:
+    driver: bridge
